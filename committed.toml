@@ -1,0 +1,9 @@
+style = "conventional"
+allowed_scopes = [
+    "core",
+    "cli",
+    "ci",
+    "deps",
+]
+subject_length = 72
+merge_commit = false
