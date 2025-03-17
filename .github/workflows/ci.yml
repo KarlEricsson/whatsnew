@@ -1,0 +1,79 @@
+name: CI
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+
+# Cancel in-progress runs in same group when a new workflow run is triggered.
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+env:
+  RUST_BACKTRACE: 1
+  CARGO_TERM_COLOR: always
+  CLICOLOR: 1
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check typos
+        uses: crate-ci/typos@master
+
+      - name: Lint commits messages
+        uses: crate-ci/committed@master
+
+  # Using nightly rustfmt to be able to use imports_granularity and group_imports 
+  format:
+    name: Format (nightly rustfmt)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          toolchain: nightly
+          components: rustfmt
+
+      - name: Check formatting
+        run: cargo fmt --all --check
+
+  test:
+    name: Clippy/Build/Test
+    strategy:
+      matrix:
+        # TODO: Also add macos and windows?
+        os: ["ubuntu-latest"]
+        rust: ["stable"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+          components: clippy
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Run clippy
+        run: cargo clippy --workspace -- --deny warnings
+
+      - name: Build
+        run: cargo build --workspace
+
+      - name: Test
+        run: cargo test --workspace
