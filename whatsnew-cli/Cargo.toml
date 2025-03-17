@@ -1,0 +1,18 @@
+[package]
+name = "whatsnew-cli"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+whatsnew-core.workspace = true
+anyhow.workspace = true
+clap = { version = "4.5.32", features = ["derive"] }
+tokio.workspace = true
+jiff.workspace = true
+indexmap.workspace = true
+etcetera = "0.10.0"
+owo-colors = { version = "4.2.0", features = ["supports-colors"] }
+
+[[bin]]
+name = "whatsnew"
+path = "src/main.rs"

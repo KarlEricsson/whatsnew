@@ -1,0 +1,27 @@
+[workspace]
+members = ["whatsnew-core", "whatsnew-cli"]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+# rust-version = "1.65.0"  # Decide
+
+authors = ["Karl Ericsson <dev@karlericsson.com>"]
+license = "MIT"
+repository = "https://github.com/KarlEricsson/whatsnew"
+# readme = ""
+# description = ""
+# keywords = []
+# categories = ["command-line-utilities"]
+
+
+[workspace.dependencies]
+whatsnew-core = { path = "./whatsnew-core" }
+anyhow = "1.0.97"
+indexmap = { version = "2.8.0", features = ["serde"] }
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
+jiff = { version = "0.2.4", features = ["serde"]}
+tokio = { version = "1.44.1", features = ["macros", "rt-multi-thread"] }
+futures-util = "0.3.31"
